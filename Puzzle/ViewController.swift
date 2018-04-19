@@ -11,6 +11,10 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var board: UIView!
     
+    @IBAction func btnRandom(_ sender: Any) {
+        randomTiles();
+    }
+    
     var tileWidth : Int = 0;
     var tileCenterX : Int = 0;
     var tileCenterY : Int = 0;
@@ -41,6 +45,7 @@ class ViewController: UIViewController {
                 tile.center = currentCenter;
                 tile.text = "\(tileNumber)";
                 tile.textAlignment = NSTextAlignment.center;
+                tile.isUserInteractionEnabled = true;
                 self.tileCenterArray.add(currentCenter);
                 tile.backgroundColor = UIColor.red;
                 self.board.addSubview(tile);
@@ -57,11 +62,19 @@ class ViewController: UIViewController {
     }
     
     func randomTiles() {
+        let tempFileCenterArray : NSMutableArray = self.tileCenterArray.mutableCopy() as! NSMutableArray;
         for anyTile in self.tileArray {
-            let randomIndex : Int = Int(arc4random()) % self.tileCenterArray.count;
-            let randomCenter : CGPoint = self.tileCenterArray[randomIndex] as! CGPoint;
+            let randomIndex : Int = Int(arc4random()) % tempFileCenterArray.count;
+            let randomCenter : CGPoint = tempFileCenterArray[randomIndex] as! CGPoint;
             (anyTile as! customLabel).center = randomCenter;
-            self.tileCenterArray.removeObject(at: randomIndex);
+            tempFileCenterArray.removeObject(at: randomIndex);
+        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let currenTouch : UITouch = touches.first!;
+        if (self.tileArray.contains(currenTouch.view as Any)){
+            currenTouch.view?.alpha = 0
         }
     }
     
